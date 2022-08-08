@@ -1,0 +1,37 @@
+; a:asz8k -o inout.o inout.8kn
+
+    .global _outp
+	
+	.global _inp
+    .global csv
+	.global cret
+
+__text     .sect
+
+_outp:
+	ldk    r0, #12
+	call   csv
+	ldb    rl7, 7(r14)
+	ld     r6, 4(r14)
+	ld     r5, #62    ; privilege escalation to system mode
+	sc     #2
+	outb   @r6, rl7
+	ldctl  r0, FCW
+	res    r0, #15    ; turn off segmented mode
+	res    r0, #14    ; turn off system mode
+	ldctl  FCW, r0
+	jp     cret
+
+_inp:
+    ldk    r0, #12
+	call   csv
+	ld     r7, 4(r14)
+	ld     r5, #62    ; privilege escalation to system mode
+	sc     #2
+	inb    rl7, @r7
+	extsb  r7         ; extend the sign bit
+	ldctl  r0, FCW
+	res    r0, #15    ; turn off segmented mode
+	res    r0, #14    ; turn off system mode
+	ldctl  FCW, r0
+	jp     cret	
