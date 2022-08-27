@@ -197,6 +197,16 @@ uchar relop_tab[] = {
 #define RELOP_LT		5
 #define RELOP_UNKNOWN	        6
 
+uchar logop_tab[] = {
+	'A','N','D'+0x80,
+	'O','R'+0x80,
+	0
+};
+
+#define LOGOP_AND   0
+#define LOGOP_OR    1
+#define LOGOP_UNKNOWN 2
+
 #define NUM_VAR 27  /* why is this 27 and not 26 ?? */
 #define VAR_SIZE sizeof(short int) /* Size of variables in bytes */
 
@@ -804,7 +814,7 @@ short int expr2()
 }
 
 /***************************************************************************/
-short int expression()
+short int expr1()
 {
 	short int a,b;
 
@@ -843,6 +853,34 @@ short int expression()
 		if(a < b) return 1;
 		break;
 	}
+	return 0;
+}
+
+short int expression()
+{
+	short int a,b;
+
+	a = expr1();
+	/* Check if we have an error */
+	if(exp_error)	return a;
+
+	scantable(logop_tab);
+	if(table_index == LOGOP_UNKNOWN)
+		return a;
+	
+	switch(table_index)
+	{
+		case LOGOP_AND:
+		  b = expr1();
+			return (a & b);
+			break;
+
+		case LOGOP_OR:
+		  b = expr1();
+			return (a | b);
+			break;
+	}
+	
 	return 0;
 }
 

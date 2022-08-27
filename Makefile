@@ -6,9 +6,10 @@ all:
 up:
 	rm -rf holding
 	mkdir holding
-	cp tbasic.c host.c host.h inout.8kn holding/
-	python ~/projects/pi/z8000/cpm8kdisks/addeof.py holding/*.c holding/*.h holding/*.8kn
-	cpmrm -f cpm8k ~/projects/pi/z8000/super/sup.img tbasic.c host.c host.h inout.8kn || true
+	cp tbasic.c host.c host.h inout.8kn *.bas holding/
+	cp bbasic.sub rbasic.sub holding/
+	python ~/projects/pi/z8000/cpm8kdisks/addeof.py holding/*.c holding/*.h holding/*.8kn holding/*.sub holding/*.bas
+	cpmrm -f cpm8k ~/projects/pi/z8000/super/sup.img tbasic.c host.c host.h inout.8kn "*.bas" bbasic.sub rbasic.sub || true
 	cpmcp -f cpm8k ~/projects/pi/z8000/super/sup.img holding/* 0:
 
 .PHONY: down
